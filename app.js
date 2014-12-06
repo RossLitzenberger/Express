@@ -11,19 +11,24 @@ app.use(express.static('public'));
 
 var blocks = { };
 
-// create a block
-app.post('/blocks', parseUrlencoded, function(request, response){
-	var newBlock = request.body;
-	blocks[newBlock] = newBlock.description;
+// var blocksRoute = app.route('/blocks')
+// short hand 
 
-	response.status(201).json(newBlock.name);
-});
+app.route('/blocks')
+	// create a block
+	.post( parseUrlencoded, function(request, response){
+		var newBlock = request.body;
+		blocks[newBlock] = newBlock.description;
 
-// delete the block
-app.delete('/blocks/:name',function(request, response){
-	delete blocks[request.blockName];
-	response.sendStatus(200);
-});
+		response.status(201).json(newBlock.name);
+	});
+
+	// delete the block
+app.route('/blocks/:name')
+	.delete(function(request, response){
+		delete blocks[request.blockName];
+		response.sendStatus(200);
+	});
 
 // listening on port 3000
 app.listen(3000, function(){
