@@ -4,18 +4,28 @@ var app = express();
 var logger = require('./logger');
 app.use(logger);
 
-// app.get('/', function(request, response){
-// 	response.sendFile(__dirname + '/public/index.html');
-// });
+var bodyParser = require('body-parser');
+var parseUrlencoded = bodyParser.urlencoded({ extended: false });
 
-// static middleware serving files form the public folder
 app.use(express.static('public'));
 
-app.get('/blocks', function(request, response){
-	var blocks = ['Fixed', 'Movable', 'Rotating'];
-	response.json(blocks);
+var blocks = { };
+
+// create a block
+app.post('/blocks', parseUrlencoded, function(request, response){
+	var newBlock = request.body;
+	blocks[newBlock] = newBlock.description;
+
+	response.status(201).json(newBlock.name);
 });
 
+// delete the block
+app.delete('/blocks/:name',function(request, response){
+	delete blocks[request.blockName];
+	response.sendStatus(200);
+});
+
+// listening on port 3000
 app.listen(3000, function(){
 	console.log('Listening on port 3000');
 });
